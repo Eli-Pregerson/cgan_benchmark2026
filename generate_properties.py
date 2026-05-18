@@ -4,6 +4,9 @@ import gdown
 import numpy as np
 import os
 import json
+import onnx
+from onnx import helper, TensorProto
+from onnx import numpy_helper
 
 def create_input_bounds(c: np.ndarray, z: np.ndarray, eps: float, changable_latents_idx: List) -> np.ndarray:
     """
@@ -97,6 +100,20 @@ if __name__ == '__main__':
         gdown.download_folder(url, quiet=True, use_cookies=False)
     files = os.listdir(onnx_folder)
     assert len(files) == 8, "Expected 8 onnx files in the onnx_files directory"
+
+    # Fix transformer output shape from scalar [] to [1, 1]
+    transformer_path = os.path.join(onnx_folder, "cGAN_imgSz32_nCh_3_small_transformer.onnx")
+    model = onnx.load(transformer_path)
+    if model.graph.output[0].type.tensor_type.shape.dim.__len__() == 0:
+        for node in model.graph.node:
+            for i, out in enumerate(node.output):
+                if out == "Y":
+                    node.output[i] = "Y_scalar"
+        shape_const = numpy_helper.from_array(np.array([1, 1], dtype=np.int64), name="reshape_shape")
+        model.graph.initializer.append(shape_const)
+        model.graph.node.append(helper.make_node("Reshape", inputs=["Y_scalar", "reshape_shape"], outputs=["Y"]))
+        model.graph.output[0].CopyFrom(helper.make_tensor_value_info("Y", TensorProto.FLOAT, [1, 1]))
+        onnx.save(model, transformer_path)
 
     # create a folder for the vnnlib files
     vnnlib_folder = "vnnlib"
