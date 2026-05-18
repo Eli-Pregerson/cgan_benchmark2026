@@ -24,10 +24,10 @@ The objective of this cGAN is to generate camera images that contain a vehicle o
 Here we attach some generated images as well as the architecture of the cGAN (including both generator and discriminator).
 
 <p align="center">
-    <img alt="output_images" src="https://github.com/stanleybak/vnncomp2026/assets/29678149/fd6a36fd-42dd-4361-b28f-c485d494c87e">
+    <img alt="output_images" src="https://github.com/stanleybak/vnncomp2023/assets/29678149/fd6a36fd-42dd-4361-b28f-c485d494c87e">
 </p>
 <p align="center">    
-    <img alt="cgan_architecture" src="https://github.com/stanleybak/vnncomp2026/assets/29678149/51a653bd-dbdd-4944-ab14-23be3370f565">
+    <img alt="cgan_architecture" src="https://github.com/stanleybak/vnncomp2023/assets/29678149/51a653bd-dbdd-4944-ab14-23be3370f565">
 </p>
 
 The generator takes two inputs: 1) a distance condition (1-d scalar) and 2) a noise vector that controls the environment (4-d vector). The output of the generator is a generated image.
